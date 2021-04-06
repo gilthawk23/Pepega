@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cstdlib>
-#include <ctime>	
+#include <ctime>
 using namespace std;
-void swap(int* a, int* b) {
+void swap(int *a, int *b)
+{
 	int t = *a;
 	*a = *b;
 	*b = t;
@@ -12,14 +13,15 @@ int main()
 {
 	setlocale(LC_ALL, "Russian");
 	srand(time(0));
-	int secondarr[10] = { 1,2,3,4,5,6,7,8,9,10 },minindex,arr[20], frequency[10] = { 0 };
+	int secondarr[10] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}, minindex, arr[20], frequency[10] = {0};
 	for (int i = 0; i < 20; ++i)
 	{
 		arr[i] = rand() % 10 + 1;
 	}
 	for (int i = 0; i < 20; ++i)
 	{
-		for (int j = 0; j < 10; ++j) {
+		for (int j = 0; j < 10; ++j)
+		{
 			if (arr[i] == secondarr[j])
 			{
 				++frequency[j];
@@ -31,12 +33,15 @@ int main()
 	{
 		cout << arr[i] << " ";
 	}
-	cout << endl << endl << "numbers: \t";
+	cout << endl
+		 << endl
+		 << "numbers: \t";
 	for (int i = 0; i < 10; ++i)
 	{
 		cout << secondarr[i] << " ";
 	}
-	cout << endl << "frequency: \t";
+	cout << endl
+		 << "frequency: \t";
 	for (int i = 0; i < 10; ++i)
 	{
 		cout << frequency[i] << " ";
@@ -45,45 +50,48 @@ int main()
 	for (int i = 0; i < 9; i++)
 	{
 		minindex = i;
-		for (int j = i+1; j < 10; j++)
+		for (int j = i + 1; j < 10; j++)
 		{
 			if (frequency[j] > frequency[minindex])
 			{
 				minindex = j;
 			}
 		}
-			swap(frequency[minindex], frequency[i]);
-			swap(secondarr[minindex], secondarr[i]);
+		swap(frequency[minindex], frequency[i]);
+		swap(secondarr[minindex], secondarr[i]);
 	}
-	cout << endl << "sorted number: \t";
+	cout << endl
+		 << "sorted number: \t";
 
 	for (int i = 0; i < 10; ++i)
 	{
 		frequency[i] = frequency[i];
 		cout << secondarr[i] << " ";
 	}
-	cout << endl << "sorted freq.: \t";
-	for (int i=0;i<10;++i)
+	cout << endl
+		 << "sorted freq.: \t";
+	for (int i = 0; i < 10; ++i)
 	{
 		cout << frequency[i] << " ";
 	}
 	int j = 0;
-	for (int i=0;i<20;++i)
+	for (int i = 0; i < 20; ++i)
 	{
-		if (frequency[j]==0)
+		if (frequency[j] == 0)
 		{
 			j++;
 		}
-		if (frequency[j]!=0)
+		if (frequency[j] != 0)
 		{
-			arr[i]=secondarr[j];
+			arr[i] = secondarr[j];
 			frequency[j]--;
 		}
-
 	}
-	
-	cout << endl << endl << "sorted arr: ";
-	for (int i=0;i<20;++i)
+
+	cout << endl
+		 << endl
+		 << "sorted arr: ";
+	for (int i = 0; i < 20; ++i)
 	{
 		cout << arr[i] << " ";
 	}
