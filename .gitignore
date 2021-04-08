@@ -1,6 +1,6 @@
 # Folders
-.vscode
-.git
+.vscode/
+.git/
 
 # Prerequisites
 *.d
