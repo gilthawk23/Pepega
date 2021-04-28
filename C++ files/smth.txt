@@ -1,17 +1,14 @@
 // swap
-/* 
 template <class T>
-void swap (T *a, T *b)
+void swap(T *a, T *b)
 {
     T temp = *a;
     *a = *b;
     *b = *temp;
-} 
-*/
+}
 
 // from string to vector
-/* 
-vector<string> SplitIntoWords(const string& text)
+vector<string> SplitIntoWords(const string &text)
 {
     vector<string> words;
     string word;
@@ -32,10 +29,8 @@ vector<string> SplitIntoWords(const string& text)
 
     return words;
 }
-*/
 
 // Selection sort
-/* 
 // main
 const int size = 10;
 int arr[size];
@@ -74,24 +69,16 @@ void SelectionSort(int *arr, const char direction, const int size)
         arr[min] = temp;
     }
 }
-*/
 
 // duration
-/* 
 auto start = chrono::high_resolution_clock::now();
-                    // code // 
+// code //
 auto end = chrono::high_resolution_clock::now();
-chrono::duration<double> duration = end - start; 
-*/
+chrono::duration<double> duration = end - start;
 
-// info
-/* 
-При использовании функции void дописывать к параметрам ссылки. 
-Иначе будет происходить все манипуляции в переменных функции, а не main 
-*/
+// При использовании функции void дописывать к параметрам ссылки.Иначе будет происходить все манипуляции в переменных функции, а не main
 
 // Добавление элементов из одного вектора в другой
-/* 
 void MoveStrings(vector<string> &source, vector<string> &destination)
 {
     for (string &word : source)
@@ -99,25 +86,19 @@ void MoveStrings(vector<string> &source, vector<string> &destination)
         destination.push_back(word);
     }
     source.clear();
-} 
-*/
+}
 
 // info
-/* 
 string ReadString()
 {
     string query;
     getline(cin, query);
     return query;
 }
-//
-const string query = ReadString(); 
-*/
+const string query = ReadString();
 
 // print map
-/*
-#include <map>
-map <string, int> variable_name = {{"string"s, int},{"string"s, int} ...}
+map<string, int> variable_name = {{"string"s, int}, {"string"s, int}...}
 
 void PrintMap(const map<!!!> &leg_count)
 {
@@ -126,11 +107,9 @@ void PrintMap(const map<!!!> &leg_count)
         cout << key << " " << value << endl;
     }
 }
-*/
 
 // output
-/*  
-    #include <fstream>
-    ofstream fout("txt_name.txt", ios_base::app);
-    fout (<<||>>) ... 
-*/
+
+#include <fstream>
+ofstream fout("txt_name.txt", ios_base::app);
+fout(<< || >>)...
