@@ -75,6 +75,7 @@ auto start = chrono::high_resolution_clock::now();
 // code //
 auto end = chrono::high_resolution_clock::now();
 chrono::duration<double> duration = end - start;
+cout << duration.count() << endl;
 
 // При использовании функции void дописывать к параметрам ссылки.Иначе будет происходить все манипуляции в переменных функции, а не main
 
