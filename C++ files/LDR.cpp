@@ -19,27 +19,23 @@ void func(int &max, int &counter)
 int main()
 {
     const string path = "zadanie24_2.txt";
-    ifstream file;
     string s;
+    ifstream file;
     file.open(path);
     file >> s;
     file.close();
     int counter = 0, max = 0;
     for (int i = 0; i < s.length(); ++i)
     {
-        if (s[i] == 'L')
+        if (((s[i] == 'L') && (counter % 3 == 0)) || ((s[i] == 'D') && (counter % 3 == 1)) || ((s[i] == 'R') && (counter % 3 == 2)))
         {
             ++counter;
-            ++i;
-            if (s[i] == 'D')
-            {
-                ++i;
-            }
         }
         else
         {
             func(max, counter);
         }
     }
+    func(max, counter);
     cout << max << endl;
 }
