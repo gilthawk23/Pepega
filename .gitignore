@@ -1,10 +1,12 @@
 # Folders
 .vscode/
 .git/
-test.cpp
+
+test*.cpp
 *.txt
-# Prerequisites
+*.ahk
 *.d
+*.code-workspace
 
 # Compiled Object files
 *.slo

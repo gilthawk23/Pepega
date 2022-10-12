@@ -1,3 +1,4 @@
+// Task from yandex.practicum
 #include <iostream>
 #include <string>
 #include <vector>
