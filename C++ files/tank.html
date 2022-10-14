@@ -1,0 +1,287 @@
+<head>
+    <style>
+        body {
+            margin: 0 0;
+            overflow: hidden;
+        }
+        
+        #outer {
+            margin: auto;
+            margin-top: 75px;
+            width: 960px;
+            height: 160px;
+            border: solid;
+            text-align: center;
+        }
+        
+        #counter {
+            vertical-align: middle;
+            text-align: center;
+            font: 8.3em "Fira Sans", sans-serif;
+        }
+        
+        canvas {
+            border: solid;
+        }
+    </style>
+    <title id="title"></title>
+</head>
+
+<body>
+    <div id="outer">
+        <div id="counter"></div>
+        <canvas id="cnvs"></canvas>
+    </div>
+    <script>
+        let title = document.getElementById("title");
+        let Ccounter = document.getElementById("counter");
+        let counter = 0;
+        let cnvs = document.getElementById("cnvs");
+        let cnt = cnvs.getContext("2d");
+        let cnvsW = (cnvs.width = 960);
+        let cnvsH = (cnvs.height = 540);
+        cnvs.style.marginLeft = "-3px";
+        class balloon {
+            constructor(r) {
+                this.r = r;
+                this.x = Math.random() * (cnvsW - this.r) + this.r / 2;
+                this.y = Math.random() * (cnvsH - this.r) + this.r / 2;
+                this.hit = false;
+            }
+            render() {
+                cnt.beginPath();
+                cnt.fillStyle = "pink";
+                cnt.shadowBlur = 3;
+                cnt.shadowColor = "purple";
+                cnt.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+                cnt.closePath();
+                cnt.fill();
+                if (this.hit) {
+                    this.x = Math.random() * (cnvsW - this.r) + this.r / 2;
+                    this.y = Math.random() * (cnvsH - this.r) + this.r / 2;
+                    this.hit = false;
+                }
+                cnt.fillStyle = "black";
+                cnt.shadowBlur = 0;
+                cnt.shadowColor = "black";
+            }
+            isHit(bx, by, br, tx, ty, tr) {
+                tr /= 2;
+                br /= 2;
+                if (
+                    (this.x + this.r >= bx - br &&
+                        this.x - this.r <= bx + br &&
+                        this.y - this.r <= by + br &&
+                        this.y + this.r >= by - br) ||
+                    (this.x + this.r >= tx - tr &&
+                        this.x - this.r <= tx + tr &&
+                        this.y - this.r <= ty + tr &&
+                        this.y + this.r >= ty - tr)
+                ) {
+                    this.hit = true;
+                    ++counter;
+                }
+            }
+        }
+        class tank {
+            constructor(x, y, speed) {
+                this.x = x;
+                this.y = y;
+                this.speed = speed;
+                this.a = 50;
+                this.b = 50;
+                this.c = 15;
+                this.d = 1;
+            }
+            top() {
+                cnt.fillStyle = "green";
+                cnt.fillRect(
+                    this.x - 0.5 * this.a,
+                    this.y - 0.5 * this.a,
+                    this.a,
+                    this.a
+                );
+                cnt.strokeRect(this.x - 0.5 * this.c, this.y - this.b, this.c, this.b);
+                cnt.fillRect(this.x - 0.5 * this.c, this.y - this.b, this.c, this.b);
+                this.d = 1;
+                cnt.fillStyle = "black";
+            }
+            bottom() {
+                cnt.fillStyle = "green";
+                cnt.fillRect(
+                    this.x - 0.5 * this.a,
+                    this.y - 0.5 * this.a,
+                    this.a,
+                    this.a
+                );
+                cnt.fillRect(this.x - 0.5 * this.c, this.y, this.c, this.b);
+                cnt.strokeRect(this.x - 0.5 * this.c, this.y, this.c, this.b);
+                this.d = 2;
+                cnt.fillStyle = "black";
+            }
+            left() {
+                cnt.fillStyle = "green";
+                cnt.fillRect(
+                    this.x - 0.5 * this.a,
+                    this.y - 0.5 * this.a,
+                    this.a,
+                    this.a
+                );
+                cnt.fillRect(this.x - this.b, this.y - 0.5 * this.c, this.b, this.c);
+
+                cnt.strokeRect(this.x - this.b, this.y - 0.5 * this.c, this.b, this.c);
+                this.d = 3;
+                cnt.fillStyle = "black";
+            }
+            right() {
+                cnt.fillStyle = "green";
+                cnt.fillRect(
+                    this.x - 0.5 * this.a,
+                    this.y - 0.5 * this.a,
+                    this.a,
+                    this.a
+                );
+                cnt.strokeRect(this.x, this.y - 0.5 * this.c, this.b, this.c);
+                cnt.fillRect(this.x, this.y - 0.5 * this.c, this.b, this.c);
+                this.d = 4;
+                cnt.fillStyle = "black";
+            }
+            move(k) {
+                this.d = k;
+                switch (this.d) {
+                    case 1:
+                        this.y -= this.speed;
+                        break;
+                    case 2:
+                        this.y += this.speed;
+                        break;
+                    case 3:
+                        this.x -= this.speed;
+                        break;
+                    case 4:
+                        this.x += this.speed;
+                        break;
+                }
+            }
+            render() {
+                if (this.d == 1) this.top();
+                if (this.d == 2) this.bottom();
+                if (this.d == 3) this.left();
+                if (this.d == 4) this.right();
+            }
+        }
+        class bullet {
+            constructor(x, y, speed, d, r) {
+                this.x = x;
+                this.y = y;
+                this.speed = speed;
+                this.d = d;
+                this.r = r;
+            }
+            render() {
+                cnt.beginPath();
+                cnt.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+                cnt.closePath();
+                cnt.fill();
+            }
+            move() {
+                switch (this.d) {
+                    case 1:
+                        this.y -= this.speed;
+                        break;
+                    case 2:
+                        this.y += this.speed;
+                        break;
+                    case 3:
+                        this.x -= this.speed;
+                        break;
+                    case 4:
+                        this.x += this.speed;
+                        break;
+                }
+            }
+        }
+        let keyK = 0,
+            keyS = 0;
+        let Abrams = new tank(cnvsW / 2, cnvsH / 2, 5);
+        let Bullet = new bullet();
+        Bullet.r = 5;
+        let reset = document.getElementById("reset");
+        const BalloonQuant = 15;
+        let BalloonArr = [];
+        let BalloonRadius = 25;
+        for (let i = 0; i < BalloonQuant; ++i)
+            BalloonArr.push(new balloon(BalloonRadius));
+        console.log(BalloonArr);
+
+        window.addEventListener("keydown", (e) => {
+            if (!keyK) {
+                if (e.code == "KeyW") keyK = 1;
+                if (e.code == "KeyS") keyK = 2;
+                if (e.code == "KeyA") keyK = 3;
+                if (e.code == "KeyD") keyK = 4;
+            }
+            if (!keyS && (e.code == "Space" || e.code == "KeyR")) {
+                Bullet.r = 5;
+                keyS = 1;
+                Bullet.x = Abrams.x;
+                Bullet.y = Abrams.y;
+                Bullet.speed = Abrams.speed * 5;
+                Bullet.d = Abrams.d;
+                console.log("yep");
+            }
+        });
+
+        window.addEventListener("keyup", (e) => {
+            switch (e.code) {
+                case "KeyW":
+                case "KeyS":
+                case "KeyA":
+                case "KeyD":
+                    keyK = null;
+                    break;
+                case "KeyR":
+                    Bullet.r = 50;
+                case "Space":
+                    setTimeout(() => {
+                        keyS = null;
+                    }, 1000);
+                    break;
+            }
+        });
+
+        function frame() {
+            cnt.clearRect(0, 0, cnvsW, cnvsH);
+            Abrams.render();
+            if (keyK) {
+                Abrams.move(keyK);
+            }
+            if (true) {
+                if (Abrams.x + Abrams.a / 2 >= cnvsW + 1) Abrams.x -= Abrams.speed;
+                if (Abrams.x - Abrams.a / 2 <= 0 - 1) Abrams.x += Abrams.speed;
+                if (Abrams.y + Abrams.a / 2 >= cnvsH + 1) Abrams.y -= Abrams.speed;
+                if (Abrams.y - Abrams.a / 2 <= 0 - 1) Abrams.y += Abrams.speed;
+            }
+            if (keyS) {
+                Bullet.render();
+                Bullet.move();
+            }
+
+            for (let i = 0; i < BalloonQuant; ++i) {
+                BalloonArr[i].isHit(
+                    Bullet.x,
+                    Bullet.y,
+                    Bullet.r,
+                    Abrams.x,
+                    Abrams.y,
+                    Abrams.a
+                );
+                BalloonArr[i].render();
+            }
+            Ccounter.innerHTML = counter;
+        }
+        setInterval(() => {
+            frame();
+        }, 15);
+    </script>
+</body>
