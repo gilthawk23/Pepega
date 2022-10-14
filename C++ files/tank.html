@@ -2,20 +2,16 @@
     <style>
         body {
             margin: 0 0;
-            overflow: hidden;
         }
         
         #outer {
             margin: auto;
-            margin-top: 75px;
+            margin-top: 50px;
             width: 960px;
-            height: 160px;
             border: solid;
-            text-align: center;
         }
         
         #counter {
-            vertical-align: middle;
             text-align: center;
             font: 8.3em "Fira Sans", sans-serif;
         }
@@ -23,29 +19,42 @@
         canvas {
             border: solid;
         }
+        
+        #instruction {
+            height: 125px;
+            width: 960px;
+            vertical-align: middle;
+            text-align: center;
+            font: 1.2em "Fira Sans", sans-serif;
+        }
     </style>
-    <title id="title"></title>
+    <title id="title">Moving green square</title>
 </head>
 
 <body>
     <div id="outer">
         <div id="counter"></div>
         <canvas id="cnvs"></canvas>
+        <div id="instruction">
+            <p>WASD - Movement</p>
+            <p>SPACE - Shoot</p>
+            <p>R - ???</p>
+        </div>
     </div>
     <script>
         let title = document.getElementById("title");
-        let Ccounter = document.getElementById("counter");
-        let counter = 0;
+        let targetCounter = document.getElementById("counter");
+        let sum = 0;
         let cnvs = document.getElementById("cnvs");
         let cnt = cnvs.getContext("2d");
         let cnvsW = (cnvs.width = 960);
         let cnvsH = (cnvs.height = 540);
         cnvs.style.marginLeft = "-3px";
-        class balloon {
-            constructor(r) {
-                this.r = r;
-                this.x = Math.random() * (cnvsW - this.r) + this.r / 2;
-                this.y = Math.random() * (cnvsH - this.r) + this.r / 2;
+        class target {
+            constructor(radius) {
+                this.radius = radius;
+                this.x = Math.random() * (cnvsW - this.radius) + this.radius / 2;
+                this.y = Math.random() * (cnvsH - this.radius) + this.radius / 2;
                 this.hit = false;
             }
             render() {
@@ -53,12 +62,12 @@
                 cnt.fillStyle = "pink";
                 cnt.shadowBlur = 3;
                 cnt.shadowColor = "purple";
-                cnt.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+                cnt.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
                 cnt.closePath();
                 cnt.fill();
                 if (this.hit) {
-                    this.x = Math.random() * (cnvsW - this.r) + this.r / 2;
-                    this.y = Math.random() * (cnvsH - this.r) + this.r / 2;
+                    this.x = Math.random() * (cnvsW - this.radius) + this.radius / 2;
+                    this.y = Math.random() * (cnvsH - this.radius) + this.radius / 2;
                     this.hit = false;
                 }
                 cnt.fillStyle = "black";
@@ -69,17 +78,17 @@
                 tr /= 2;
                 br /= 2;
                 if (
-                    (this.x + this.r >= bx - br &&
-                        this.x - this.r <= bx + br &&
-                        this.y - this.r <= by + br &&
-                        this.y + this.r >= by - br) ||
-                    (this.x + this.r >= tx - tr &&
-                        this.x - this.r <= tx + tr &&
-                        this.y - this.r <= ty + tr &&
-                        this.y + this.r >= ty - tr)
+                    (this.x + this.radius >= bx - br &&
+                        this.x - this.radius <= bx + br &&
+                        this.y - this.radius <= by + br &&
+                        this.y + this.radius >= by - br) ||
+                    (this.x + this.radius >= tx - tr &&
+                        this.x - this.radius <= tx + tr &&
+                        this.y - this.radius <= ty + tr &&
+                        this.y + this.radius >= ty - tr)
                 ) {
                     this.hit = true;
-                    ++counter;
+                    ++sum;
                 }
             }
         }
@@ -91,7 +100,7 @@
                 this.a = 50;
                 this.b = 50;
                 this.c = 15;
-                this.d = 1;
+                this.position = 1;
             }
             top() {
                 cnt.fillStyle = "green";
@@ -103,7 +112,7 @@
                 );
                 cnt.strokeRect(this.x - 0.5 * this.c, this.y - this.b, this.c, this.b);
                 cnt.fillRect(this.x - 0.5 * this.c, this.y - this.b, this.c, this.b);
-                this.d = 1;
+                this.position = 1;
                 cnt.fillStyle = "black";
             }
             bottom() {
@@ -116,7 +125,7 @@
                 );
                 cnt.fillRect(this.x - 0.5 * this.c, this.y, this.c, this.b);
                 cnt.strokeRect(this.x - 0.5 * this.c, this.y, this.c, this.b);
-                this.d = 2;
+                this.position = 2;
                 cnt.fillStyle = "black";
             }
             left() {
@@ -130,7 +139,7 @@
                 cnt.fillRect(this.x - this.b, this.y - 0.5 * this.c, this.b, this.c);
 
                 cnt.strokeRect(this.x - this.b, this.y - 0.5 * this.c, this.b, this.c);
-                this.d = 3;
+                this.position = 3;
                 cnt.fillStyle = "black";
             }
             right() {
@@ -143,12 +152,12 @@
                 );
                 cnt.strokeRect(this.x, this.y - 0.5 * this.c, this.b, this.c);
                 cnt.fillRect(this.x, this.y - 0.5 * this.c, this.b, this.c);
-                this.d = 4;
+                this.position = 4;
                 cnt.fillStyle = "black";
             }
             move(k) {
-                this.d = k;
-                switch (this.d) {
+                this.position = k;
+                switch (this.position) {
                     case 1:
                         this.y -= this.speed;
                         break;
@@ -164,28 +173,39 @@
                 }
             }
             render() {
-                if (this.d == 1) this.top();
-                if (this.d == 2) this.bottom();
-                if (this.d == 3) this.left();
-                if (this.d == 4) this.right();
+                switch (this.position) {
+                    case 1:
+                        this.top();
+                        break;
+                    case 2:
+                        this.bottom();
+                        break;
+                    case 3:
+                        this.left();
+                        break;
+                    case 4:
+                        this.right();
+                        break;
+                }
             }
         }
-        class bullet {
-            constructor(x, y, speed, d, r) {
+        class projectile {
+            constructor(x, y, speed, position, radius) {
                 this.x = x;
                 this.y = y;
                 this.speed = speed;
-                this.d = d;
-                this.r = r;
+                this.position = position;
+                this.radius = radius;
             }
             render() {
                 cnt.beginPath();
-                cnt.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+                cnt.fillStyle = "darkblue";
+                cnt.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
                 cnt.closePath();
                 cnt.fill();
             }
             move() {
-                switch (this.d) {
+                switch (this.position) {
                     case 1:
                         this.y -= this.speed;
                         break;
@@ -201,34 +221,41 @@
                 }
             }
         }
-        let keyK = 0,
-            keyS = 0;
-        let Abrams = new tank(cnvsW / 2, cnvsH / 2, 5);
-        let Bullet = new bullet();
-        Bullet.r = 5;
+        let movementKey = 0,
+            shootKey = 0;
+        let armata = new tank(cnvsW / 2, cnvsH / 2, 5);
+        let tankProjectile = new projectile();
+        tankProjectile.radius = 5;
         let reset = document.getElementById("reset");
-        const BalloonQuant = 15;
-        let BalloonArr = [];
-        let BalloonRadius = 25;
-        for (let i = 0; i < BalloonQuant; ++i)
-            BalloonArr.push(new balloon(BalloonRadius));
-        console.log(BalloonArr);
-
+        const targetQuantity = 10;
+        let targetArray = [];
+        const targetRadius = 30;
+        for (let i = 0; i < targetQuantity; ++i)
+            targetArray.push(new target(targetRadius));
         window.addEventListener("keydown", (e) => {
-            if (!keyK) {
-                if (e.code == "KeyW") keyK = 1;
-                if (e.code == "KeyS") keyK = 2;
-                if (e.code == "KeyA") keyK = 3;
-                if (e.code == "KeyD") keyK = 4;
+            if (!movementKey) {
+                switch (e.code) {
+                    case "KeyW":
+                        movementKey = 1;
+                        break;
+                    case "KeyS":
+                        movementKey = 2;
+                        break;
+                    case "KeyA":
+                        movementKey = 3;
+                        break;
+                    case "KeyD":
+                        movementKey = 4;
+                        break;
+                }
             }
-            if (!keyS && (e.code == "Space" || e.code == "KeyR")) {
-                Bullet.r = 5;
-                keyS = 1;
-                Bullet.x = Abrams.x;
-                Bullet.y = Abrams.y;
-                Bullet.speed = Abrams.speed * 5;
-                Bullet.d = Abrams.d;
-                console.log("yep");
+            if (!shootKey && (e.code == "Space" || e.code == "KeyR")) {
+                tankProjectile.radius = 5;
+                shootKey = 1;
+                tankProjectile.x = armata.x;
+                tankProjectile.y = armata.y;
+                tankProjectile.speed = armata.speed * 5;
+                tankProjectile.position = armata.position;
             }
         });
 
@@ -238,13 +265,13 @@
                 case "KeyS":
                 case "KeyA":
                 case "KeyD":
-                    keyK = null;
+                    movementKey = null;
                     break;
                 case "KeyR":
-                    Bullet.r = 50;
+                    tankProjectile.radius = 50;
                 case "Space":
                     setTimeout(() => {
-                        keyS = null;
+                        shootKey = null;
                     }, 1000);
                     break;
             }
@@ -252,33 +279,33 @@
 
         function frame() {
             cnt.clearRect(0, 0, cnvsW, cnvsH);
-            Abrams.render();
-            if (keyK) {
-                Abrams.move(keyK);
+            armata.render();
+            if (movementKey) {
+                armata.move(movementKey);
             }
             if (true) {
-                if (Abrams.x + Abrams.a / 2 >= cnvsW + 1) Abrams.x -= Abrams.speed;
-                if (Abrams.x - Abrams.a / 2 <= 0 - 1) Abrams.x += Abrams.speed;
-                if (Abrams.y + Abrams.a / 2 >= cnvsH + 1) Abrams.y -= Abrams.speed;
-                if (Abrams.y - Abrams.a / 2 <= 0 - 1) Abrams.y += Abrams.speed;
+                if (armata.x + armata.a / 2 >= cnvsW + 1) armata.x -= armata.speed;
+                if (armata.x - armata.a / 2 <= 0 - 1) armata.x += armata.speed;
+                if (armata.y + armata.a / 2 >= cnvsH + 1) armata.y -= armata.speed;
+                if (armata.y - armata.a / 2 <= 0 - 1) armata.y += armata.speed;
             }
-            if (keyS) {
-                Bullet.render();
-                Bullet.move();
+            if (shootKey) {
+                tankProjectile.render();
+                tankProjectile.move();
             }
 
-            for (let i = 0; i < BalloonQuant; ++i) {
-                BalloonArr[i].isHit(
-                    Bullet.x,
-                    Bullet.y,
-                    Bullet.r,
-                    Abrams.x,
-                    Abrams.y,
-                    Abrams.a
+            for (let i = 0; i < targetQuantity; ++i) {
+                targetArray[i].isHit(
+                    tankProjectile.x,
+                    tankProjectile.y,
+                    tankProjectile.radius,
+                    armata.x,
+                    armata.y,
+                    armata.a
                 );
-                BalloonArr[i].render();
+                targetArray[i].render();
             }
-            Ccounter.innerHTML = counter;
+            targetCounter.innerHTML = sum;
         }
         setInterval(() => {
             frame();
